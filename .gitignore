@@ -1,0 +1,99 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+*.lock
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# IntelliJ / Android Studio related
+*.iml
+*.ipr
+*.iws
+.idea/
+out/
+android/local.properties
+
+# VS Code related
+.vscode/
+*.code-workspace
+
+# Flutter / Dart specific
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+**/android/.gradle
+**/android/app/debug.keystore
+**/android/key.properties
+
+# Web related
+**/ios/.generated/
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/ephemeral/
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+
+# Windows specific
+windows/flutter/generated_plugins.cmake
+windows/flutter/generated_plugin_registrant.cc
+windows/flutter/generated_plugin_registrant.h
+
+# macOS specific
+macos/Flutter/GeneratedPluginRegistrant.swift
+macos/Flutter/ephemeral/
+macos/Flutter/flutter_export_environment.sh
+DerivedData/
+
+# Linux specific
+linux/flutter/generated_plugins.cmake
+linux/flutter/generated_plugin_registrant.cc
+linux/flutter/generated_plugin_registrant.h
+
+# Environment variables & secrets (Claude API key, Supabase keys)
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+secrets.json
+
+# Local audio recordings & processed files
+/recordings/
+/audio_cache/
+*.wav
+*.mp3
+*.m4a
+*.temp.wav
+
+# Supabase local development
+supabase/.temp/
+supabase/volumes/
+
+# Logs
+*.log
+flutter_drive.log
+
+# Coverage reports
+coverage/
+*.lcov
+
+# Backup files
+*.bak
+*.old
