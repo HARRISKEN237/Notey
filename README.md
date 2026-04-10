@@ -108,7 +108,7 @@
 ##  Project Structure
 
 ```
-notewise/
+notey/
 ├── android/
 │   ├── app/src/main/kotlin/
 │   │   └── NoiseSuppressorPlugin.kt      # Native Android noise bridge

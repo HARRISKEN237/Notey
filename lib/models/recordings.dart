@@ -1,7 +1,7 @@
-
 import 'package:isar/isar.dart';
+import 'course.dart';
 
-part '../data/models/recording.g.dart';
+part 'recordings.g.dart';
 
 @collection
 class Recording {
