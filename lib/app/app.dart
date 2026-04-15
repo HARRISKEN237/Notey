@@ -3,12 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'theme.dart';
 import 'routes.dart';
-
-// Assumed existing provider from providers/theme_provider.dart
-// import '../providers/theme_provider.dart';
-
-/// Temporary stub – replace with your real provider import.
-final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.light);
+import '../providers/theme_provider.dart';
 
 class NOteyApp extends ConsumerWidget {
   const NOteyApp({super.key});

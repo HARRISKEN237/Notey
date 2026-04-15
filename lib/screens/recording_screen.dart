@@ -77,7 +77,7 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen>
 
     final courseIdInt = int.tryParse(widget.courseId) ?? 0;
     
-    // Start AI Processing
+    // Start AI Processing - don't read state immediately after
     await ref.read(recordingProcessingProvider.notifier).processRecording(
       path, 
       'Lecture Recording', 
@@ -86,6 +86,11 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen>
 
     if (!mounted) return;
 
+    // Wait a moment for state to update, then check again
+    await Future.delayed(const Duration(milliseconds: 500));
+    
+    if (!mounted) return;
+    
     final processingState = ref.read(recordingProcessingProvider);
     if (processingState.status == ProcessingStatus.completed) {
       AppToast.show(context, message: 'Notes generated successfully!', type: ToastType.success);
@@ -188,7 +193,7 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen>
             // Animated mic button
             AnimatedBuilder(
               animation: _pulseAnim,
-              builder: (_, __) {
+              builder: (_, _) {
                 final scale = isPaused ? 1.0 : _pulseAnim.value;
                 return Transform.scale(
                   scale: scale,

@@ -11,10 +11,12 @@ import '../screens/signup_screen.dart';
 import '../screens/verification_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/library_screen.dart';
+import '../screens/course_picker_screen.dart';
 import '../screens/add_notebook_screen.dart';
 import '../screens/profile_screen.dart';
 import '../screens/recording_screen.dart';
 import '../screens/summary_screen.dart';
+import '../providers/auth_provider.dart';
 
 // ─── Route names ─────────────────────────────────────────────────────────────
 abstract class AppRoute {
@@ -26,6 +28,7 @@ abstract class AppRoute {
   static const home         = '/home';
   static const library      = '/library';
   static const add          = '/add';
+  static const addNotebook  = '/add-notebook';
   static const profile      = '/profile';
   static const recording    = '/recording/:courseId';
   static const summary      = '/summary/:noteId';
@@ -33,11 +36,9 @@ abstract class AppRoute {
 
 // ─── Router provider ─────────────────────────────────────────────────────────
 
-/// Stub – replace with your real authProvider.
-final _authStateProvider = StateProvider<bool>((ref) => false);
-
 final routerProvider = Provider<GoRouter>((ref) {
-  final isAuthenticated = ref.watch(_authStateProvider);
+  final auth = ref.watch(authProvider);
+  final isAuthenticated = auth.isLoggedIn;
 
   return GoRouter(
     initialLocation: AppRoute.splash,
@@ -90,6 +91,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: AppRoute.add,
+            pageBuilder: (ctx, state) => _noTransition(const CoursePickerScreen(), state),
+          ),
+          GoRoute(
+            path: AppRoute.addNotebook,
             pageBuilder: (ctx, state) => _noTransition(const AddNotebookScreen(), state),
           ),
           GoRoute(

@@ -9,6 +9,16 @@ final recordingsProvider = ChangeNotifierProvider<RecordingProvider>((ref) {
   return RecordingProvider();
 });
 
+// Added: A provider to fetch a single recording by ID
+final recordingDetailProvider = Provider.family<Recording?, int>((ref, id) {
+  final recordings = ref.watch(recordingsProvider).recordings;
+  try {
+    return recordings.firstWhere((r) => r.id == id);
+  } catch (_) {
+    return null;
+  }
+});
+
 class RecordingProvider extends ChangeNotifier {
   final RecordingRepository _repository = RecordingRepository(IsarService());
   List<Recording> _recordings = [];

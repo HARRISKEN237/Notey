@@ -1,20 +1,45 @@
-// lib/screens/recording/course_picker_screen.dart
+// lib/screens/course_picker_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../app/routes.dart';
-import '../../app/theme.dart';
-import '../../widgets/theme_toggle_button.dart';
+import '../app/routes.dart';
+import '../app/theme.dart';
+import '../widgets/theme_toggle_button.dart';
 import '../models/course.dart';
 import '../providers/course_provider.dart';
 import '../widgets/loading_overlay.dart';
 import '../widgets/toast_widget.dart';
+
+
+
+
+
 
 class CoursePickerScreen extends ConsumerStatefulWidget {
   const CoursePickerScreen({super.key});
 
   @override
   ConsumerState<CoursePickerScreen> createState() => _CoursePickerScreenState();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// _EmptyState
+// ─────────────────────────────────────────────────────────────────────────────
+class _EmptyState extends StatelessWidget {
+  const _EmptyState();
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.book_outlined, size: 48, color: Colors.grey.shade300),
+          const SizedBox(height: 12),
+          const Text('No courses found', style: TextStyle(color: Colors.grey, fontSize: 14)),
+        ],
+      ),
+    );
+  }
 }
 
 class _CoursePickerScreenState extends ConsumerState<CoursePickerScreen> {
@@ -54,7 +79,7 @@ class _CoursePickerScreenState extends ConsumerState<CoursePickerScreen> {
   }
 
   void _goCreateCourse() {
-    context.go(AppRoute.add);
+    context.go(AppRoute.addNotebook);
   }
 
   @override
@@ -100,56 +125,64 @@ class _CoursePickerScreenState extends ConsumerState<CoursePickerScreen> {
               ),
             ),
 
-            // ── Selected course badge ────────────────────────────────────────
-            AnimatedSize(
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeOutCubic,
-              child: _selected != null
-                  ? _SelectedBadge(course: _selected!)
-                  : const SizedBox.shrink(),
-            ),
+            // ── Empty state when no courses at all ──────────────────────────
+            if (allCourses.isEmpty && !isLoading)
+              Expanded(
+                child: _NoCoursesEmptyState(onAddNotebook: _goCreateCourse),
+              )
+            else
+              // ── Selected course badge ────────────────────────────────────────
+              AnimatedSize(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeOutCubic,
+                child: _selected != null
+                    ? _SelectedBadge(course: _selected!)
+                    : const SizedBox.shrink(),
+              ),
 
             // ── Course list ──────────────────────────────────────────────────
-            Expanded(
-              child: filtered.isEmpty && !isLoading
-                  ? const _EmptyState()
-                  : ListView(
-                padding: const EdgeInsets.only(bottom: 16),
-                children: [
-                  if (recent.isNotEmpty) ...[
-                    const _SectionHeader(label: 'Recent'),
-                    ...recent.map(
-                          (c) => _CourseRow(
-                        course: c,
-                        isSelected: _selected?.id == c.id,
-                        onTap: () => setState(() =>
-                        _selected = _selected?.id == c.id ? null : c),
+            if (allCourses.isNotEmpty)
+              Expanded(
+                child: filtered.isEmpty && !isLoading
+                    ? const _EmptyState()
+                    : ListView(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  children: [
+                    if (recent.isNotEmpty) ...[
+                      const _SectionHeader(label: 'Recent'),
+                      ...recent.map(
+                            (c) => _CourseRow(
+                          course: c,
+                          isSelected: _selected?.id == c.id,
+                          onTap: () => setState(() =>
+                          _selected = _selected?.id == c.id ? null : c),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
 
-                  if (rest.isNotEmpty) ...[
-                    _SectionHeader(
-                      label: _query.isEmpty ? 'All courses' : 'Results',
-                    ),
-                    ...rest.map(
-                          (c) => _CourseRow(
-                        course: c,
-                        isSelected: _selected?.id == c.id,
-                        onTap: () => setState(() =>
-                        _selected = _selected?.id == c.id ? null : c),
+                    if (rest.isNotEmpty) ...[
+                      _SectionHeader(
+                        label: _query.isEmpty ? 'All courses' : 'Results',
                       ),
-                    ),
+                      ...rest.map(
+                            (c) => _CourseRow(
+                          course: c,
+                          isSelected: _selected?.id == c.id,
+                          onTap: () => setState(() =>
+                          _selected = _selected?.id == c.id ? null : c),
+                        ),
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
-            ),
 
             // ── Bottom CTA ───────────────────────────────────────────────────
-            _BottomCta(
-              selected: _selected,
-              onStart: _startRecording,
-            ),
+            if (allCourses.isNotEmpty)
+              _BottomCta(
+                selected: _selected,
+                onStart: _startRecording,
+              ),
           ],
         ),
       ),
@@ -161,7 +194,7 @@ class _CoursePickerScreenState extends ConsumerState<CoursePickerScreen> {
 // _SearchBar
 // ─────────────────────────────────────────────────────────────────────────────
 class _SearchBar extends StatelessWidget {
-  const _SearchBar({required this.controller, required this.onChanged, super.key});
+  const _SearchBar({required this.controller, required this.onChanged});
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
 
@@ -221,7 +254,7 @@ class _SearchBar extends StatelessWidget {
 }
 
 class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.label, super.key});
+  const _SectionHeader({required this.label});
   final String label;
 
   @override
@@ -246,7 +279,6 @@ class _CourseRow extends StatelessWidget {
     required this.course,
     required this.isSelected,
     required this.onTap,
-    super.key,
   });
 
   final Course course;
@@ -399,19 +431,56 @@ class _BottomCta extends StatelessWidget {
   }
 }
 
-class _EmptyState extends StatelessWidget {
-  const _EmptyState();
+class _NoCoursesEmptyState extends StatelessWidget {
+  const _NoCoursesEmptyState({required this.onAddNotebook});
+  final VoidCallback onAddNotebook;
+
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.book_outlined, size: 48, color: Colors.grey.shade300),
-          const SizedBox(height: 12),
-          const Text('No courses found', style: TextStyle(color: Colors.grey, fontSize: 14)),
+          Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              color: NOteyColors.primary.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.book_outlined,
+              size: 50,
+              color: NOteyColors.primary,
+            ),
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            'No Notebook Yet',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Create a new course notebook to get started',
+            style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 32),
+          ElevatedButton.icon(
+            onPressed: onAddNotebook,
+            icon: const Icon(Icons.add),
+            label: const Text('Add Notebook'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: NOteyColors.primary,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+            ),
+          ),
         ],
       ),
     );
   }
 }
+
+
+

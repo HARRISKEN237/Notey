@@ -49,7 +49,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           const Spacer(flex: 3),
           AnimatedBuilder(
             animation: _barsAnim,
-            builder: (_, __) => NOteyLogoAnimated(progress: _barsAnim.value),
+            builder: (_, _) => NOteyLogoAnimated(progress: _barsAnim.value),
           ),
           const SizedBox(height: 24),
           const Text(

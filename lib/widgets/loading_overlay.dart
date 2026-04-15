@@ -242,7 +242,7 @@ class _RingIndicatorState extends State<_RingIndicator>
       height: widget.size,
       child: AnimatedBuilder(
         animation: _ctrl,
-        builder: (_, __) => CustomPaint(
+        builder: (_, _) => CustomPaint(
           painter: _RingPainter(
             progress: _ctrl.value,
             color: widget.color,
@@ -349,7 +349,7 @@ class _AudioBarsIndicatorState extends State<_AudioBarsIndicator>
       height: widget.height,
       child: AnimatedBuilder(
         animation: _ctrl,
-        builder: (_, __) {
+        builder: (_, _) {
           return Row(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -418,7 +418,7 @@ class _DotsIndicatorState extends State<_DotsIndicator>
       height: _dotSize + _bounceH,
       child: AnimatedBuilder(
         animation: _ctrl,
-        builder: (_, __) {
+        builder: (_, _) {
           return Row(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.end,
